@@ -108,3 +108,65 @@ class index extends controller
         print_r($_POST);
     }
 }
+
+class tasks extends controller
+{
+    public static function show()
+    {
+        $myTemplateData = array('site_name' => 'My Task Site', 'page_name' => 'task');
+        self::getTemplate('tasks', $myTemplateData);
+    }
+
+    public static function list_task()
+    {
+        $myTemplateData = array('site_name' => 'My d Task Site', 'page_name' => 'task list');
+        self::getTemplate('tasks', $myTemplateData);
+    }
+
+    public static function create()
+    {
+        print_r($_POST);
+    }
+
+    public static function edit()
+    {
+        print_r($_POST);
+    }
+
+    public static function remove()
+    {
+        print_r($_POST);
+    }
+}
+
+class request
+{
+    static public function getRequestMethod()
+    {
+        $request_method = $_SERVER['REQUEST_METHOD'];
+        return $request_method;
+    }
+
+    static public function getPage()
+    {
+
+        $page = 'index';
+        if (!empty($_GET['page'])) {
+            $page = $_GET['page'];
+        }
+        return $page;
+    }
+
+    static public function getAction()
+    {
+        if (self::getRequestMethod() == 'POST') {
+            $action = 'create';
+        } else {
+            $action = 'show';
+        }
+        if (!empty($_GET['action'])) {
+            $action = $_GET['action'];
+        }
+        return $action;
+    }
+}
