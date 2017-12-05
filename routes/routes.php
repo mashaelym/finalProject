@@ -6,11 +6,7 @@ class routes
 
     public static function getRoutes()
     {
-        //bellow adds routes to your program, routes match the URL and request method with the controller and method.
-        //You need to follow this pattern to add new URLS
-        //You should improve this function by making functions to create routes in a factory. I will look for this when grading
 
-        //I also use object for the route because it has data and it's easier to access.
         $route = new route();
         //this is the index.php route for GET
         //Specify the request method
@@ -37,20 +33,12 @@ class routes
         $route->method = 'create';
         $routes[] = $route;
 
-        //This is an examole of the post for tasks to show a task
-        //GET METHOD index.php?page=tasks&action=show
-        $route = new route();
-        $route->http_method = 'GET';
-        $route->action = 'show';
-        $route->page = 'tasks';
-        $route->controller = 'tasksController';
-        $route->method = 'show';
-        $routes[] = $route;
-
-        //This is an examole of the post for tasks to list tasks.  See the action matches the method name.
+        /** TASKS CONTROLLER ROUTES **/
+        
+         //This is an examole of the post for tasks to list tasks.  See the action matches the method name.
         //you need to add routes for create, edit, and delete
         //GET METHOD index.php?page=tasks&action=all
-
+        //1.  Get findall working and displaying a table for the todos class's todos_list method;
         $route = new route();
         $route->http_method = 'GET';
         $route->action = 'all';
@@ -58,8 +46,20 @@ class routes
         $route->controller = 'tasksController';
         $route->method = 'all';
         $routes[] = $route;
+
+        //This is an examole of the post for tasks to show a task
+        //GET METHOD index.php?page=tasks&action=show
+        //2.  Get findOne working to find one to-do and make that work for the todos controller show method.  I have to pass the ID.
+        $route = new route();
+        $route->http_method = 'GET';
+        $route->action = 'show';
+        $route->page = 'tasks';
+        $route->controller = 'tasksController';
+        $route->method = 'show';
+        $routes[] = $route;
        
        //create
+       //3.  Get the Insert working
         $route = new route();
         $route->http_method = 'POST';
         $route->action = 'create';
@@ -67,7 +67,9 @@ class routes
         $route->controller = 'tasksController';
         $route->method = 'create';
         $routes[] = $route;
+        
        //edit 
+       //5.  update working
         $route = new route();
         $route->http_method = 'POST';
         $route->action = 'edit';
@@ -75,14 +77,71 @@ class routes
         $route->controller = 'tasksController';
         $route->method = 'edit';
         $routes[] = $route;
-
-        //store
+        
+        //delete
+        //4.  get the delete working 
+        $route = new route();
+        $route->http_method = 'POST';
+        $route->action = 'delete';
+        $route->page = 'tasks';
+        $route->controller = 'tasksController';
+        $route->method = 'delete';
+        $routes[] = $route;
+        
+        //save method
         $route = new route();
         $route->http_method = 'POST';
         $route->action = 'store';
         $route->page = 'tasks';
         $route->controller = 'tasksController';
         $route->method = 'store';
+        $routes[] = $route;
+        
+        //ADD route for findByUserId
+        
+        //ADD route for findBySessionId
+        
+        
+        /** ACCOUNT CONTROLLER ROUTES **/
+        
+        //This goes in the login form action method
+        //GET METHOD index.php?page=accounts&action=login
+        $route = new route();
+        $route->http_method = 'POST';
+        $route->action = 'login';
+        $route->page = 'accounts';
+        $route->controller = 'accountsController';
+        $route->method = 'login';
+        $routes[] = $route;
+        
+        //ADD ROUTE -- METHOD FOR LOGOUT
+        
+        
+         //edit
+        $route = new route();
+        $route->http_method = 'POST';
+        $route->action = 'edit';
+        $route->page = 'accounts';
+        $route->controller = 'accountsController';
+        $route->method = 'edit';
+        $routes[] = $route;
+        
+         //register
+        $route = new route();
+        $route->http_method = 'POST';
+        $route->action = 'register';
+        $route->page = 'accounts';
+        $route->controller = 'accountsController';
+        $route->method = 'register';
+        $routes[] = $route;
+        
+        //GET METHOD index.php?page=accounts&action=show
+        $route = new route();
+        $route->http_method = 'GET';
+        $route->action = 'show';
+        $route->page = 'accounts';
+        $route->controller = 'accountsController';
+        $route->method = 'show';
         $routes[] = $route;
 
         //GET METHOD index.php?page=accounts&action=all
@@ -93,36 +152,7 @@ class routes
         $route->controller = 'accountsController';
         $route->method = 'all';
         $routes[] = $route;
-        //GET METHOD index.php?page=accounts&action=show
-
-        $route = new route();
-        $route->http_method = 'GET';
-        $route->action = 'show';
-        $route->page = 'accounts';
-        $route->controller = 'accountsController';
-        $route->method = 'show';
-        $routes[] = $route;
-
-        //This goes in the login form action method
-        //GET METHOD index.php?page=accounts&action=login
-
-        $route = new route();
-        $route->http_method = 'POST';
-        $route->action = 'login';
-        $route->page = 'accounts';
-        $route->controller = 'accountsController';
-        $route->method = 'login';
-        $routes[] = $route;
-
-        //register
-        $route = new route();
-        $route->http_method = 'POST';
-        $route->action = 'register';
-        $route->page = 'accounts';
-        $route->controller = 'accountsController';
-        $route->method = 'register';
-        $routes[] = $route;
-
+        
         //store
         $route = new route();
         $route->http_method = 'POST';
@@ -131,29 +161,10 @@ class routes
         $route->controller = 'accountsController';
         $route->method = 'store';
         $routes[] = $route;
-
-        //edit
-        $route = new route();
-        $route->http_method = 'POST';
-        $route->action = 'edit';
-        $route->page = 'accounts';
-        $route->controller = 'accountsController';
-        $route->method = 'edit';
-        $routes[] = $route;
-
-        //delete
-        $route = new route();
-        $route->http_method = 'POST';
-        $route->action = 'delete';
-        $route->page = 'tasks';
-        $route->controller = 'tasksController';
-        $route->method = 'delete';
-        $routes[] = $route;
-
+        
         return $routes;
     }
 }
-
 //this is the route prototype object  you would make a factory to return this
 
 class route
