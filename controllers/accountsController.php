@@ -2,6 +2,7 @@
 
 
 //each page extends controller and the index.php?page=tasks causes the controller to be called
+namespace accountsController;
 class accountsController extends http\controller
 {
 
@@ -71,6 +72,11 @@ class accountsController extends http\controller
         //        $record = accounts::findUser($_POST['uname']);
 
         print_r($_POST);
+
+    }
+    
+    public static function logout()
+    {
 
     }
 

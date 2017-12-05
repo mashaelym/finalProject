@@ -2,6 +2,7 @@
 
 
 //each page extends controller and the index.php?page=tasks causes the controller to be called
+namespace tasksController;
 class tasksController extends http\controller
 {
     //each method in the controller is named an action.

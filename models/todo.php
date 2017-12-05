@@ -9,6 +9,7 @@ final class todo extends database\model
     public $duedate;
     public $message;
     public $isdone;
+    public $useriD;
     protected static $modelName = 'todo';
 
     public static function getTablename()
@@ -16,6 +17,17 @@ final class todo extends database\model
 
         $tableName = 'todos';
         return $tableName;
+    }
+
+
+    public static function findTaskById()
+    {
+
+        $tableName = get_called_class();
+        $sql = 'SELECT * FROM ' . $tableName . ' WHERE useriD =' . $useriD;
+        $recordsSet = self::getResults($sql);
+        return $recordsSet[0];
+
     }
 }
 
