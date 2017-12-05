@@ -97,10 +97,23 @@ class routes
         $route->method = 'store';
         $routes[] = $route;
         
-        //ADD route for findByUserId
+        //route for findByUserId
+        $route = new route();
+        $route->http_method = 'GET';
+        $route->action = 'findByUserId';
+        $route->page = 'tasks';
+        $route->controller = 'tasksController';
+        $route->method = 'findByUserId';
+        $routes[] = $route;
         
-        //ADD route for findBySessionId
-        
+        //route for findBySessionId
+        $route = new route();
+        $route->http_method = 'GET';
+        $route->action = 'findBySessionId';
+        $route->page = 'tasks';
+        $route->controller = 'tasksController';
+        $route->method = 'findBySessionId';
+        $routes[] = $route;
         
         /** ACCOUNT CONTROLLER ROUTES **/
         
@@ -114,8 +127,14 @@ class routes
         $route->method = 'login';
         $routes[] = $route;
         
-        //ADD ROUTE -- METHOD FOR LOGOUT
-        
+        //LOGOUT
+        $route = new route();
+        $route->http_method = 'POST';
+        $route->action = 'logout';
+        $route->page = 'accounts';
+        $route->controller = 'accountsController';
+        $route->method = 'logout';
+        $routes[] = $route;        
         
          //edit
         $route = new route();
