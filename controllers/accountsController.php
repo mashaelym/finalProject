@@ -2,8 +2,9 @@
 
 
 //each page extends controller and the index.php?page=tasks causes the controller to be called
-namespace accountsController;
-class accountsController extends http\controller
+namespace controller;
+
+class accountsController extends \http\controller
 {
 
     //each method in the controller is named an action.
@@ -19,7 +20,7 @@ class accountsController extends http\controller
     public static function all()
     {
 
-        $records = accounts::findAll();
+        $records = \model\account::findTasks();
         self::getTemplate('all_accounts', $records);
 
     }
@@ -55,7 +56,7 @@ class accountsController extends http\controller
 
     public static function edit()
     {
-        $record = accounts::findOne($_REQUEST['id']);
+        $record = account::findOne($_REQUEST['id']);
 
         self::getTemplate('edit_account', $record);
 

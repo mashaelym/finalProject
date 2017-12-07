@@ -2,8 +2,8 @@
 
 
 //each page extends controller and the index.php?page=tasks causes the controller to be called
-namespace tasksController;
-class tasksController extends http\controller
+namespace controller;
+class tasksController extends \http\controller
 {
     //each method in the controller is named an action.
     //to call the show function the url is index.php?page=task&action=show
@@ -17,7 +17,7 @@ class tasksController extends http\controller
 
     public static function all()
     {
-        $records = todos::findAll();
+        $records = \model\todo::findAll();
         self::getTemplate('all_tasks', $records);
 
     }

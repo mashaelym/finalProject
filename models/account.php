@@ -27,7 +27,7 @@ final class account extends \database\model
     {
 
         //I am temporarily putting a findall here but you should add a method to todos that takes the USER ID and returns their tasks.
-        $records = todos::findAll();
+        $records = todo::findAll();
         print_r($records);
         return $records;
     }
