@@ -1,5 +1,7 @@
 <?php
 
+namespace model;
+
 final class account extends \database\model
 {
     public $id;

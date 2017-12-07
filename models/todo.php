@@ -1,6 +1,8 @@
 <?php
 
-final class todo extends database\model
+namespace model;
+
+final class todo extends \database\model
 {
     public $id;
     public $owneremail;
@@ -28,6 +30,11 @@ final class todo extends database\model
         $recordsSet = self::getResults($sql);
         return $recordsSet[0];
 
+    }
+
+    public static function findAll()
+    {
+        return 'hello';
     }
 }
 
