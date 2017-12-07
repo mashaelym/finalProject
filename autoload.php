@@ -21,32 +21,37 @@ return;
 
 public static function controllers($class)
 {
+	$base_path = 'controllers/';
+	$parts = explode('\\', $class);
 
-//this is useful to see what class and namespace is being asked for
-//echo $class . '<br>';
-$path = 'controllers/' . str_replace('\\', '/', $class) . '.php';
-//this is useful to see what path is being asked for
-
-//echo $path . '<br>';
-if (is_file($path)) {
-include $path;
-return;
-}
+	$class_name = end($parts) . '.php';
+	
+	$path = $base_path . $class_name;
+	
+	if(is_file($path))
+	{
+		//print "trying to require file: $path" . "<br/>";
+		require $path;
+		return;
+	}
 }
 
 public static function models($class)
 {
 
-//this is useful to see what class and namespace is being asked for
-//echo $class . '<br>';
-$path = 'models/' . str_replace('\\', '/', $class) . '.php';
-//this is useful to see what path is being asked for
+	$base_path = 'models/';
+	$parts = explode('\\', $class);
 
-//echo $path . '<br>';
-if (is_file($path)) {
-include $path;
-return;
-}
+	$class_name = end($parts) . '.php';
+	
+	$path = $base_path . $class_name;
+	
+	if(is_file($path))
+	{
+		//print "trying to require file: $path" . "<br/>";
+		require $path;
+		return;
+	}
 }
 
 public static function collections($class)
