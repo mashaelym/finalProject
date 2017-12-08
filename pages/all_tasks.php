@@ -21,7 +21,7 @@
 //this is how you print something
 
 //print utility\htmlTable::genarateTableFromMultiArray($data);
-
+print 'nothing to see here -- all tasks placeholder';
 
 ?>
 
