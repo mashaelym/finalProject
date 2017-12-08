@@ -1,11 +1,18 @@
 <?php
 namespace database;
 
+use http\controller;
+
 abstract class model
 {
 
     public function save()
     {
+         if($this->validate() == FALSE) {
+             echo 'failed validation';
+             exit;
+         }
+
         if ($this->id != '') {
             $sql = $this->update();
         } else {
@@ -47,6 +54,11 @@ abstract class model
         $sql = 'INSERT INTO ' . $tableName . ' (' . $columnString . ') VALUES (' . $valueString . ')';
         return $sql;
     }
+
+     public function validate() {
+ 
+         return TRUE;
+     }
 
     private function update()
     {
