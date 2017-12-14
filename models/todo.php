@@ -21,21 +21,42 @@ final class todo extends \database\model
         return $tableName;
     }
 
-
-    public static function findTaskById()
+    /**
+     * Find one task by task id
+     */
+    public static function findTaskByTaskId()
     {
-
-        $tableName = get_called_class();
-        $sql = 'SELECT * FROM ' . $tableName . ' WHERE useriD =' . $useriD;
-        $recordsSet = self::getResults($sql);
-        return $recordsSet[0];
-
+        $record = todo::findOne($id);
+        return $record;
     }
 
+    /**
+     * Find all tasks
+     **/
     public static function findAll()
     {
-        return 'hello';
+        //I am temporarily putting a findall here but you should add a method to todos that takes the USER ID and returns their tasks.
+        $records = \model\todo::findAll();
+        print_r($records);
+        return $records;
     }
+    
+     //This is the function to write to find tasks by user ID for listing on their homepage.
+     //Should return the record set like findAll in the collection class
+     public static  function findTasksbyUserId($userid) {
+  
+        $tableName = get_called_class();
+        $sql = 'SELECT * FROM ' . $tableName . ' WHERE id = ?';
+        $sql = 'SELECT * FROM ' . $tableName . ' WHERE ownerid = ?';
+         //grab the only record for find one and return as an object
+        $recordsSet = self::getResults($sql, $userid);
+ 
+         if (is_null($recordsSet)) {
+             return FALSE;
+         } else {
+             return $recordsSet;
+         }
+     }
 }
 
 ?>
