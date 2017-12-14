@@ -38,9 +38,13 @@ class accountsController extends \http\controller
     }
 
     //this is the function to save the user the new user for registration
+    
+    //TODO: Use a Request Object to Encapsulate It
+    //TODO: Need to create class for hashing the password - add a method to compare the passwords this is where bcrypt should be done and it should return TRUE / FALSE for logic
+    //TODO: Add route to the homepage controller to display messages --- 
     public static function store()
     {
-        $user = accounts::findUserbyEmail($_REQUEST['email']);
+        $user = \model\account::findUserbyEmail($_POST['email']);
  
          if ($user == FALSE) {
              $user = new account();
@@ -50,23 +54,19 @@ class accountsController extends \http\controller
              $user->phone = $_POST['phone'];
              $user->birthday = $_POST['birthday'];
              $user->gender = $_POST['gender'];
-             //$user->password = $_POST['password'];
-             //this creates the password
-             //this is a mistake you can fix...
-             //Turn the set password function into a static method on a utility class.
-             $user->password = $user->setPassword($_POST['password']);
+             $user->password = $_POST['password'];
              $user->save();
 
              //you may want to send the person to a
              //login page or create a session and log them in
              //and then send them to the task list page and a link to create tasks
-             header("Location: index.php?page=accounts&action=all");
+             header("Location: index.php?action=success"); //ADD route with a message
+         }
+         else {
  
-         } else {
- 
-          //You can make a template for errors called error.php
-          // and load the template here with the error you want to show.
-          // echo 'already registered';
+            //You can make a template for errors called error.php
+            // and load the template here with the error you want to show.
+            // echo 'already registered';
              $error = 'already registered';
              self::getTemplate('error', $error);
           

@@ -17,7 +17,56 @@ class tasksController extends \http\controller
 
     public static function all()
     {
-        $records = \model\todo::findAll();
+        
+        //This is how you would save a new todo item
+
+        
+        /*
+        $record = new \model\todo();
+        $record->message = 'some task';
+        $record->isdone = 0;
+        $record->ownerid = 1;
+        $record->owneremail = 'me@me.com';
+        $record->createddate = '2017-11-14 12:59:45';
+        $record->duedate = '2017-11-15 12:59:45';
+        $record->save();
+        print "<pre>" . print_r($record, true) . "</pre>";
+        */
+
+        //This is how you would delete a record
+
+        /*
+        $record = new todo();
+        $record->id = 5;
+        $record->deleteById();
+        print "<pre>" . print_r($record, true) . "</pre>";
+        */
+
+        /*
+        $record = new todo();
+        $record->id = 6;
+        $record->message = 'finish homework';
+        $record->isdone = 1;
+        $record->save();
+        print "<pre>" . print_r($record, true) . "</pre>";
+        */
+
+
+        // this would be the method to put in the index page for todos
+        /*
+        $records = todos::findAll();
+        print "<pre>" . print_r($records, true) . "</pre>";
+        */
+
+
+        //this code is used to get one record and is used for showing one record or updating one record
+        /*
+        $record = todos::findOne(6);
+        print "<pre>" . print_r($record, true) . "</pre>";
+        */
+        
+        
+        //$records = \model\todo::findAll();
         /*  
             session_start();
             if(key_exists('userID',$_SESSION)) {
@@ -32,7 +81,7 @@ class tasksController extends \http\controller
          $records = todos::findTasksbyID($userID);
         
         */
-        self::getTemplate('all_tasks', $records);
+        //self::getTemplate('all_tasks', $records);
 
     }
     //to call the show function the url is called with a post to: index.php?page=task&action=create
