@@ -26,7 +26,7 @@ final class todo extends \database\model
      */
     public static function findTaskByTaskId()
     {
-        $record = todo::findOne($id);
+        $record = \model\todo::findOne($id);
         return $record;
     }
 
@@ -57,6 +57,7 @@ final class todo extends \database\model
              return $recordsSet;
          }
      }
+
 }
 
 ?>

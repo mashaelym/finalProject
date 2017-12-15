@@ -9,6 +9,7 @@ class tasksController extends \http\controller
     //to call the show function the url is index.php?page=task&action=show
     public static function show()
     {
+        //there is no findOne in todos??
         $record = todos::findOne($_REQUEST['id']);
         self::getTemplate('show_task', $record);
     }
@@ -18,45 +19,110 @@ class tasksController extends \http\controller
     public static function all()
     {
         
-        //This is how you would save a new todo item
-
         
-        /*
-        $record = new \model\todo();
+ //insert/create
+        $record = new \model\todo::insert();
         $record->message = 'some task';
         $record->isdone = 0;
         $record->ownerid = 1;
         $record->owneremail = 'me@me.com';
         $record->createddate = '2017-11-14 12:59:45';
         $record->duedate = '2017-11-15 12:59:45';
-        $record->save();
-        print "<pre>" . print_r($record, true) . "</pre>";
-        */
+        $record->\model\save();
+
+        echo '<h1>' . "Insert NEW Record" . '</h1>';
+
+        $tableOpenString = '<table>';
+        $headerString = '<thead><tr>';
+
+       
+        foreach ($record as $columnName)
+        {
+          $headerString.="<td>$columnName</td>";
+        }
+
+        $headerString.='</thead></tr>';
+        $tableBodyString = '<tbody>';
+        for ($i=1 ; $i<=sizeof($record)-1 ; $i++)
+        {
+            $currentArray = $records[$i];  
+
+            if (sizeof($currentArray)==sizeof($record[0]))
+            {
+              $tableBodyString.='<tr>';
+             foreach ($currentArray as $row)
+             {
+                $tableBodyString.="<td>$row</td>";
+             }
+             $tableBodyString.='</tr>';
+            }
+        }
+        $tableBodyString.='</tbody>';
+        $tableCloseString = '</table>';
+
+        $htmlOutput = $tableOpenString . $headerString . $tableBodyString . $tableCloseString . "<br/>";
+
+        print $htmlOutput; 
+        echo '<hr>';
+        
 
         //This is how you would delete a record
-
-        /*
-        $record = new todo();
+        
+        $record = new \model\todo();
         $record->id = 5;
-        $record->deleteById();
+        $record->\model\delete();
         print "<pre>" . print_r($record, true) . "</pre>";
-        */
+        
 
-        /*
-        $record = new todo();
+        //test update
+
+        $record = new \model\todo();
         $record->id = 6;
         $record->message = 'finish homework';
         $record->isdone = 1;
-        $record->save();
+        $record->\model\save();
         print "<pre>" . print_r($record, true) . "</pre>";
-        */
+        
 
 
         // this would be the method to put in the index page for todos
-        /*
-        $records = todos::findAll();
-        print "<pre>" . print_r($records, true) . "</pre>";
-        */
+//findall
+        
+        $records = \model\todo::findAll();
+      
+        echo '<h1>' . "Select All Records" . '</h1>';
+        $tableOpenString = '<table>';
+        $headerString = '<thead><tr>';
+
+        foreach ($records[0] as $columnName)
+        {
+          $headerString.="<td>$columnName</td>";
+        }
+
+        $headerString.='</thead></tr>';
+        $tableBodyString = '<tbody>';
+        for ($i=1 ; $i<=sizeof($records)-1 ; $i++)
+        {
+            $currentArray = $records[$i];  
+
+            if (sizeof($currentArray)==sizeof($records[0]))
+            {
+              $tableBodyString.='<tr>';
+             foreach ($currentArray as $row)
+             {
+                $tableBodyString.="<td>$row</td>";
+             }
+             $tableBodyString.='</tr>';
+            }
+        }
+        $tableBodyString.='</tbody>';
+        $tableCloseString = '</table>';
+
+        $htmlOutput = $tableOpenString . $headerString . $tableBodyString . $tableCloseString . "<br/>";
+
+        print $htmlOutput; 
+        echo '<hr>';
+        
 
 
         //this code is used to get one record and is used for showing one record or updating one record
@@ -91,13 +157,16 @@ class tasksController extends \http\controller
 
     public static function create()
     {
-        print_r($_POST);
+        $record = \model\todo::findTaskByTaskId($_REQUEST['id']);
+
+        self::getTemplate('create_task', $record);
+        
     }
 
     //this is the function to view edit record form
     public static function edit()
     {
-        $record = todos::findOne($_REQUEST['id']);
+        $record = \model\todo::findTaskByTaskId($_REQUEST['id']);
 
         self::getTemplate('edit_task', $record);
 
@@ -108,9 +177,9 @@ class tasksController extends \http\controller
     {
 
 
-        $record = todos::findOne($_REQUEST['id']);
+        $record = \model\todo::findTaskByTaskId($_REQUEST['id']);
         $record->body = $_REQUEST['body'];
-        $record->save();
+        $record->\model\todo::save();
         print_r($_POST);
 
     }
@@ -121,15 +190,15 @@ class tasksController extends \http\controller
  
          $task->body = $_POST['body'];
          $task->ownerid = $_SESSION['userID'];
-         $task->save();
+         $task->\model\todo::save();
  
      }
     //this is the delete function.  You actually return the edit form and then there should be 2 forms on that.
     //One form is the todo and the other is just for the delete button
     public static function delete()
     {
-        $record = todos::findOne($_REQUEST['id']);
-        $record->delete();
+        $record = \model\todo::findOne($_REQUEST['id']);
+        $record->model\todo::delete();
         print_r($_POST);
 
     }
