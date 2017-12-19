@@ -1,144 +1,239 @@
 <?php
 
-
-//each page extends controller and the index.php?page=tasks causes the controller to be called
 namespace controller;
 
-class accountsController extends \http\controller
+use \collection\accounts;
+use \http\controller;
+use \view\ShowAccountView;
+use \view\AllAccountsView;
+use \view\EditAccountView;
+use \view\RegisterView;
+use \view\ValidationView;
+use \model\account;
+
+class accountsController extends controller
 {
 
-    //each method in the controller is named an action.
-    //to call the show function the url is index.php?page=task&action=show
-    public static function show()
+    /**
+     * Display one account
+     * url: index.php?page=accounts&action=show
+     */
+    public function show()
     {
-        $record = accounts::findOne($_REQUEST['id']);
-        self::getTemplate('show_account', $record);
+        if($this->getSessionHandler()->isLoggedIn())
+        {
+            $id = $this->getRequestObject()->getParameter('id');
+            $record = accounts::create()->findOne($id);
+            
+            $v = new ShowAccountView();
+            $v->injectData(array('data' => $record, 'id' => $id));
+            echo $v->render();
+        }
+        else
+        {
+            $this->displayMessage('You must login to view this area!');
+        }
     }
 
-    //to call the show function the url is index.php?page=accounts&action=all
-
-    public static function all()
+    /**
+     * Display all accounts
+     * url: index.php?page=accounts&action=all
+     */
+    public function all()
     {
-
-        $records = \model\account::findTasks();
-        self::getTemplate('all_accounts', $records);
-
+        if($this->getSessionHandler()->isLoggedIn())
+        {
+            //check if logged in
+            $records = accounts::create()->findAll();
+            
+            $v = new AllAccountsView();
+            $v->injectData(array('data' => $records));
+            echo $v->render();
+        }
+        else
+        {
+            $this->displayMessage('You must login to view this area!');
+        }
     }
-    //to call the show function the url is called with a post to: index.php?page=task&action=create
-    //this is a function to create new tasks
-
-    //you should check the notes on the project posted in moodle for how to use active record here
-
-    //this is to register an account i.e. insert a new account
-    public static function register()
-    {
-        //https://www.sitepoint.com/why-you-should-use-bcrypt-to-hash-stored-passwords/
-        //USE THE ABOVE TO SEE HOW TO USE Bcrypt
-        self::getTemplate('register');
-    }
-
-    //this is the function to save the user the new user for registration
     
-    //TODO: Use a Request Object to Encapsulate It
-    //TODO: Need to create class for hashing the password - add a method to compare the passwords this is where bcrypt should be done and it should return TRUE / FALSE for logic
-    //TODO: Add route to the homepage controller to display messages --- 
-    public static function store()
+    /**
+     * Displays page to register new account
+     * url: index.php?page=accounts&action=register
+     */
+    public function register()
     {
-        $user = \model\account::findUserbyEmail($_POST['email']);
- 
-         if ($user == FALSE) {
+         $v = new RegisterView();
+         echo $v->render();
+    }
+    
+    /**
+     * Edit User
+     * url: index.php?page=accounts&action=edit
+     */
+    public function edit()
+    {
+        if($this->getSessionHandler()->isLoggedIn())
+        {
+            $id = $this->getRequestObject()->getParameter('id');
+            $record = accounts::create()->findOne($id);
+            
+            $v = new EditAccountView();
+            $v->injectData(array('data' => $record, 'id' => $id));
+            echo $v->render();
+        }
+        else
+        {
+            $this->displayMessage('You must login to view this area!');
+        }
+
+    }
+    
+    /**
+     * Add new user
+     * url: index.php?page=accounts&action=create
+     */
+    public function create()
+    {
+        
+         $user = \model\account::findUserbyEmail($this->getRequestObject()->getParameter('email'));
+         
+         if ($user == FALSE)
+         {
              $user = new account();
-             $user->email = $_POST['email'];
-             $user->fname = $_POST['fname'];
-             $user->lname = $_POST['lname'];
-             $user->phone = $_POST['phone'];
-             $user->birthday = $_POST['birthday'];
-             $user->gender = $_POST['gender'];
-             $user->password = $_POST['password'];
+             $user->email = $this->getRequestObject()->getParameter('email');        
+             $user->fname = $this->getRequestObject()->getParameter('fname');
+             $user->lname = $this->getRequestObject()->getParameter('lname');
+             $user->phone = $this->getRequestObject()->getParameter('phone');
+             $user->birthday = $this->getRequestObject()->getParameter('birthday');
+             $user->gender = $this->getRequestObject()->getParameter('gender');
+             $user->password = $this->getRequestObject()->getParameter('password'); //gets hashed in account model
+             
+             //validate
+             if($user->validate() !== true)
+             {
+                 //returns array of error messages
+                 $errors = $user->validate();
+                 $v = new ValidationView();
+                 $v->injectData(array('messages' => $errors));
+                 echo $v->render();
+                 die(); //halt execution if it's invalid
+             }
+             
+             $user->save();
+             
+             $this->displayMessage('You have successfully registered!');
+         }
+         else
+         {
+            $this->displayMessage('User is already registered. Try logging in.');
+         }
+     }
+    
+    /**
+     * Post action for creating updating user record
+     * url: index.php?page=accounts&action=update
+     */
+    public function update()
+    {
+ 
+        if($this->getSessionHandler()->isLoggedIn())
+        {
+             $id = $this->getRequestObject()->getParameter('id');
+             $user = new account();
+             $user->id = $this->getRequestObject()->getParameter('id');
+             $user->email = $this->getRequestObject()->getParameter('email');        
+             $user->fname = $this->getRequestObject()->getParameter('fname');
+             $user->lname = $this->getRequestObject()->getParameter('lname');
+             $user->phone = $this->getRequestObject()->getParameter('phone');
+             $user->birthday = $this->getRequestObject()->getParameter('birthday');
+             $user->gender = $this->getRequestObject()->getParameter('gender');
+             $user->password = $this->getRequestObject()->getParameter('password'); //gets hashed in account model
+             
+             //validate
+             if($user->validate() !== true)
+             {
+                 //returns array of error messages
+                 $errors = $user->validate();
+                 $v = new ValidationView();
+                 $v->injectData(array('messages' => $errors));
+                 echo $v->render();
+                 die(); //halt execution if it's invalid
+             }
+             
              $user->save();
 
-             //you may want to send the person to a
-             //login page or create a session and log them in
-             //and then send them to the task list page and a link to create tasks
-             header("Location: index.php?action=success"); //ADD route with a message
+             header("Location: index.php?page=accounts&action=show&id=$id");
          }
          else {
- 
-            //You can make a template for errors called error.php
-            // and load the template here with the error you want to show.
-            // echo 'already registered';
-             $error = 'already registered';
-             self::getTemplate('error', $error);
-          
+            $this->displayMessage('You must login to view this area!');
          }
 
     }
-
-    public static function edit()
-    {
-        $record = account::findOne($_REQUEST['id']);
-
-        self::getTemplate('edit_account', $record);
-
-    }
-
-    //this is used to save the update form data
-    public static function save() {
-
-         $user = accounts::findOne($_REQUEST['id']);
-         $user->email = $_POST['email'];
-         $user->fname = $_POST['fname'];
-         $user->lname = $_POST['lname'];
-         $user->phone = $_POST['phone'];
-         $user->birthday = $_POST['birthday'];
-         $user->gender = $_POST['gender'];
-         $user->save();
-         header("Location: index.php?page=accounts&action=all");
  
-     }
+     /**
+      * Delete User
+      */
+     public function delete() {
  
-     public static function delete() {
- 
-         $record = accounts::findOne($_REQUEST['id']);
-         $record->delete();
-         header("Location: index.php?page=accounts&action=all");
+        if($this->getSessionHandler()->isLoggedIn())
+        {
+            $id = $this->getRequestObject()->getParameter('id');
+            $record = accounts::create()->findOne($id);
+            $record->delete();
+            header("Location: index.php?page=accounts&action=all");
+        }
+        else
+        {
+            $this->displayMessage('You must login to view this area!');
+        }
      }
 
-    //this is to login, here is where you find the account and allow login or deny.
-    public static function login()
+    /**
+     * Login
+     */
+    public function login()
     {
-        //you will need to fix this so we can find users username.  YOu should add this method findUser to the accounts collection
-        //when you add the method you need to look at my find one, you need to return the user object.
-        //then you need to check the password and create the session if the password matches.
-        //you might want to add something that handles if the password is invalid, you could add a page template and direct to that
-        //after you login you can use the header function to forward the user to a page that displays their tasks.
-        //        $record = accounts::findUser($_POST['email']);
+        $email = $this->getRequestObject()->getParameter('email');
+        $password = $this->getRequestObject()->getParameter('password');
+        $user = accounts::create()->findUserbyEmail($email);
 
-        $user = accounts::findUserbyEmail($_REQUEST['email']);
-        
-        if ($user == FALSE) {
-             echo 'user not found';
-         } else {
- 
-             if($user->checkPassword($_POST['password']) == TRUE) {
- 
-                 echo 'login';
- 
-                 session_start();
-                 $_SESSION["userID"] = $user->id;
-                //forward the user to the show all todos page
-                 print_r($_SESSION);
-             } else {
-                 echo 'password does not match';
+        if ($user == FALSE)
+        {
+            $this->displayMessage('User does not exist. Please register.');
+        }
+        else
+        {
+             if($user->checkPassword($password) == TRUE)
+             {
+                 //session is already started on the controller on the constructor
+                 //this tells us the user is logged in
+                 $this->getSessionHandler()->setSessionVariable('id', $user->id);
+                 $this->getSessionHandler()->setSessionVariable('email', $user->email);
+                 header("Location: index.php?page=portal&action=show");
              }
- 
+             else
+             {
+                $this->displayMessage('Invalid password. Try Again.');
+             }
          }
-
     }
     
-    public static function logout()
+    /**
+     * Logout
+     */
+    public function logout()
     {
+        if($this->getSessionHandler()->isLoggedIn())
+        {
+            //remove all session variables
+            session_unset(); 
 
+            //destroy the session 
+            session_destroy();
+        }
+            
+        //redirect user to homepage
+        header("Location: index.php");
     }
 
 }
