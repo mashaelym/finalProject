@@ -1,92 +1,51 @@
 <?php
+
 class Manage
 {
-public static function core($class)
-{
+	/**
+	 * Private variable to store instance of iterator so we can
+	 * cache the results
+	 */
+	private static $fileIterator = null;
 
-//this is useful to see what class and namespace is being asked for
-//echo $class . '<br>';
-
-
-$path = 'core/' . str_replace('\\', '/', $class) . '.php';
-//this is useful to see what path is being asked for
-
-//echo $path . '<br>';
-
-if (is_file($path)) {
-include $path;
-return;
-}
-}
-
-public static function controllers($class)
-{
-	$base_path = 'controllers/';
-	$parts = explode('\\', $class);
-
-	$class_name = end($parts) . '.php';
-	
-	$path = $base_path . $class_name;
-	
-	if(is_file($path))
+	/**
+	 * Autoloader
+	 *
+	 * More efficient autoloader that gets all the php files at once
+	 * Static instance of autoloader so iteration only happens once per file
+	 **/
+	public static function load($class)
 	{
-		//print "trying to require file: $path" . "<br/>";
-		require $path;
-		return;
+		//get class name
+		$parts = explode('\\', $class);
+		$className = end($parts) . '.php';
+				
+		//use directory iterator to get list of files
+		//__DIR__ gives us the web root
+		$directoryIterator = new RecursiveDirectoryIterator(__DIR__);
+		
+		//only launch new instance if we already don't have one
+		if (is_null(self::$fileIterator))
+		{	
+			self::$fileIterator = new RecursiveIteratorIterator($directoryIterator);
+		}
+		
+		//include all files in the webroot directory
+		foreach (self::$fileIterator as $file)
+		{
+			if (!$file->isDir())
+			{
+				//include files
+				if(strtolower($file->getFilename()) == strtolower($className))
+				{
+					require_once $file->getPathname();
+					return;
+				}
+			}
+		
+		}
 	}
-}
-
-public static function models($class)
-{
-
-	$base_path = 'models/';
-	$parts = explode('\\', $class);
-
-	$class_name = end($parts) . '.php';
 	
-	$path = $base_path . $class_name;
-	
-	if(is_file($path))
-	{
-		//print "trying to require file: $path" . "<br/>";
-		require $path;
-		return;
-	}
 }
 
-public static function collections($class)
-{
-
-//this is useful to see what class and namespace is being asked for
-//echo $class . '<br>';
-$path = 'collections/' . str_replace('\\', '/', $class) . '.php';
-//this is useful to see what path is being asked for
-
-//echo $path . '<br>';
-if (is_file($path)) {
-include $path;
-return;
-}
-}
-
-public static function routes($class)
-{
-
-//this is useful to see what class and namespace is being asked for
-//echo $class . '<br>';
-$path = 'routes/' . str_replace('\\', '/', $class) . '.php';
-//this is useful to see what path is being asked for
-
-//echo $path . '<br>';
-if (is_file($path)) {
-include $path;
-return;
-}
-}
-}
-
-spl_autoload_register(array('Manage', 'routes'));
-spl_autoload_register(array('Manage', 'controllers'));
-spl_autoload_register(array('Manage', 'collections'));
-spl_autoload_register(array('Manage', 'models'));
-spl_autoload_register(array('Manage', 'core'));
+spl_autoload_register('Manage::load');
