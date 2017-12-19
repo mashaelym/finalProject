@@ -1,22 +1,29 @@
- <?php
+<?php
 
-namespace htmlHelper;
+namespace viewHelper;
 
 class arrayToHtml
 {
   
+  /**
+   * Static method to convert array to html method
+   */
   public static function generate(array $inputArray)
   {
 
-    $tableOpenString = '<table>';
+  //generate table
+    $tableOpenString = '<table style="border: 1px solid black; border-collapse: collapse;">';
     $headerString = '<thead><tr>';
 
+  //generate headers
     foreach ($inputArray[0] as $columnName)
     {
-      $headerString.="<td>$columnName</td>";
+      $headerString.='<td style="border: 1px solid black;">' . $columnName . '</td>';
     }
 
     $headerString.='</thead></tr>';
+  
+  //generate body
     $tableBodyString = '<tbody>';
     for ($i=1 ; $i<=sizeof($inputArray)-1 ; $i++)
     {
@@ -27,7 +34,7 @@ class arrayToHtml
           $tableBodyString.='<tr>';
          foreach ($currentArray as $row)
          {
-            $tableBodyString.="<td>$row</td>";
+            $tableBodyString.='<td style="border: 1px solid black;">' . $row .'</td>';
          }
          $tableBodyString.='</tr>';
         }

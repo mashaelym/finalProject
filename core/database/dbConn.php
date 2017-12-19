@@ -1,6 +1,7 @@
 <?php
 
 namespace database;
+
 //singleton pattern
 class dbConn
 {

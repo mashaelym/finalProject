@@ -5,22 +5,31 @@ namespace database;
 abstract class collection
 {
 
-    //factory to make model
-    static public function create()
+    /**
+     * Factory method to create model
+     */
+    public static function create()
     {
         $model = new static::$modelName;
         return $model;
     }
 
-    static public function findAll()
+    /**
+     * Find all method
+     */
+    public static function findAll()
     {
-        $tableName = get_called_class();
+        //replace namespace
+        $tableName = preg_replace('/.*\\\\/', '', get_called_class());
         $sql = 'SELECT * FROM ' . $tableName;
-        return self::getResults($sql);
+        return self::getResults($sql, static::$modelName);
     }
 
-    //you can use this to run other queries in on classes that extend the collection class because this is protected
-    protected static function getResults($sql, $parameters = null) 
+    /**
+     * Get Results
+     * Added result class because the correct model instance was not being passed correctly
+     */
+     protected static function getResults($sql, $resultClass, $parameters = null) 
     {
         if (!is_array($parameters)) {
         $parameters = (array) $parameters;
@@ -30,12 +39,12 @@ abstract class collection
         $statement = $db->prepare($sql);
         
         $statement->execute($parameters);
-
-        $class = static::$modelName;
         
-        
+        //get_called_class is a bad idea here --- it would return an instance of a collection class
+        //where we want the model class
+                        
         if ($statement->rowCount() > 0) {
-            $statement->setFetchMode(\PDO::FETCH_CLASS, $class);
+            $statement->setFetchMode(\PDO::FETCH_CLASS, $resultClass);
             $recordsSet = $statement->fetchAll();
  
          } else {
@@ -47,12 +56,15 @@ abstract class collection
         return $recordsSet;
     }
 
-    static public function findOne($id)
+    /**
+     * Find One
+     */
+    public static function findOne($id)
     {
-        $tableName = get_called_class();
-        $sql = 'SELECT * FROM ' . $tableName . ' WHERE id = ?';
+        $tableName = preg_replace('/.*\\\\/', '', get_called_class());
+        $sql = 'SELECT * FROM ' . $tableName . ' WHERE id = ?'; 
         //grab the only record for find one and return as an object
-       $recordsSet = self::getResults($sql, $id);
+        $recordsSet = self::getResults($sql, static::$modelName, $id);
  
          if (is_null($recordsSet)) {
              return FALSE;
